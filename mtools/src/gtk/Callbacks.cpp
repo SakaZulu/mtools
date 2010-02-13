@@ -6,64 +6,79 @@
  */
 
 #include "Nfc.h"
-
 #include "Utils.h"
-#include "Callbacks.h"
-#include "dialogs/ErrorDialog.h"
 
-Callbacks::Callbacks(Gtk::Window& winMtools, Glib::RefPtr<Gtk::Builder>& refBuilder)
-		: winMtools(winMtools), refBuilder(refBuilder) {
+#include "gtk/Consts.h"
+#include "gtk/Callbacks.h"
+#include "gtk/dialogs/ErrorDialog.h"
+
+#include "gtk/GtkUtil.h"
+
+#include "gtk/DataAccessConditions.h"
+#include "gtk/TrailerAccessConditions.h"
+
+#include <vector>
+#include <algorithm>
+
+#include "gtk/Application.h"
+
+Callbacks::Callbacks() {
+	Application* app = Application::getInstance();
+
+	DataAccessConditions dataAC;
+	TrailerAccessConditions trailerAC;
 
 	// Button
-	refBuilder->get_widget("btnSearch", pBtnSearch);
+	app->getBuilder()->get_widget("btnSearch", pBtnSearch);
 	pBtnSearch->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnSearchClicked));
-	refBuilder->get_widget("btnTab1Read", pBtnTab1Read);
+	app->getBuilder()->get_widget("btnTab1Read", pBtnTab1Read);
 	pBtnTab1Read->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnTab1ReadClick));
-	refBuilder->get_widget("btnTab1Write", pBtnTab1Write);
+	app->getBuilder()->get_widget("btnTab1Write", pBtnTab1Write);
 	pBtnTab1Write->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnTab1WriteClick));
-	refBuilder->get_widget("btnTab2Init", pBtnTab2Init);
+	app->getBuilder()->get_widget("btnTab2Init", pBtnTab2Init);
 	pBtnTab2Init->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnTab2InitClick));
-	refBuilder->get_widget("btnTab2Read", pBtnTab2Read);
+	app->getBuilder()->get_widget("btnTab2Read", pBtnTab2Read);
 	pBtnTab2Read->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnTab2ReadClick));
-	refBuilder->get_widget("btnTab2Inc", pBtnTab2Inc);
+	app->getBuilder()->get_widget("btnTab2Inc", pBtnTab2Inc);
 	pBtnTab2Inc->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnTab2IncClick));
-	refBuilder->get_widget("btnTab2Dec", pBtnTab2Dec);
+	app->getBuilder()->get_widget("btnTab2Dec", pBtnTab2Dec);
 	pBtnTab2Dec->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onBtnTab2DecClick));
 
 	// RadioButton
-	refBuilder->get_widget("rbKeyA", pRbKeyA);
-	refBuilder->get_widget("rbKeyB", pRbKeyB);
+	app->getBuilder()->get_widget("rbKeyA", pRbKeyA);
+	app->getBuilder()->get_widget("rbKeyB", pRbKeyB);
 
 	// CheckButton
-	refBuilder->get_widget("cbDefKeys", pCbDefKeys);
+	app->getBuilder()->get_widget("cbDefKeys", pCbDefKeys);
 	pCbDefKeys->signal_clicked().connect(sigc::mem_fun(*this, &Callbacks::onCbDefKeysClicked));
 
 	// SpinButton
-	refBuilder->get_widget("spnValue", pSpnValue);
-	refBuilder->get_widget("spnBlock", pSpnBlock);
-	refBuilder->get_widget("spnSector", pSpnSector);
+	app->getBuilder()->get_widget("spnValue", pSpnValue);
+	app->getBuilder()->get_widget("spnBlock", pSpnBlock);
+	app->getBuilder()->get_widget("spnSector", pSpnSector);
 
 	// Entry
-	refBuilder->get_widget("txtKey", pTxtKey);
-	refBuilder->get_widget("txtUid", pTxtUid);
-	refBuilder->get_widget("txtCardType", pTxtCardType);
-	refBuilder->get_widget("txtReadWrite", pTxtReadWrite);
+	app->getBuilder()->get_widget("txtKey", pTxtKey);
+	app->getBuilder()->get_widget("txtUid", pTxtUid);
+	app->getBuilder()->get_widget("txtCardType", pTxtCardType);
+	app->getBuilder()->get_widget("txtReadWrite", pTxtReadWrite);
 
 	// Menu item
 	Gtk::ImageMenuItem* pMiQuit;
-	refBuilder->get_widget("miQuit", pMiQuit);
+	app->getBuilder()->get_widget("miQuit", pMiQuit);
 	pMiQuit->signal_activate().connect(sigc::mem_fun(*this, &Callbacks::onMiQuitClicked));
 
 	Gtk::ImageMenuItem* pMiSearch;
-	refBuilder->get_widget("miSearch", pMiSearch);
+	app->getBuilder()->get_widget("miSearch", pMiSearch);
 	pMiSearch->signal_activate().connect(sigc::mem_fun(*this, &Callbacks::onBtnSearchClicked));
 
 	Gtk::ImageMenuItem* pMiAbout;
-	refBuilder->get_widget("miAbout", pMiAbout);
+	app->getBuilder()->get_widget("miAbout", pMiAbout);
 	pMiAbout->signal_activate().connect(sigc::mem_fun(*this, &Callbacks::about));
 
 	// About dialog
-	refBuilder->get_widget("dlgAbout", pDlgAbout);
+	app->getBuilder()->get_widget("dlgAbout", pDlgAbout);
+	pDlgAbout->signal_response().connect(sigc::mem_fun(*this, &Callbacks::onDlgAboutResponse));
 }
 
 Callbacks::~Callbacks() {
@@ -264,4 +279,8 @@ void Callbacks::clear() {
 
 void Callbacks::about() {
 	pDlgAbout->run();
+}
+
+void Callbacks::onDlgAboutResponse(int responseId) {
+	pDlgAbout->hide();
 }

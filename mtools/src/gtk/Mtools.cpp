@@ -5,7 +5,8 @@
  *      Author: rosek
  */
 
-#include "Mtools.h"
+#include "gtk/Mtools.h"
+#include "gtk/Application.h"
 
 const std::string Mtools::MTOOLS_UI = "mtools.glade";
 
@@ -13,18 +14,17 @@ Mtools::Mtools() {
 }
 
 Mtools::~Mtools() {
-	if(callbacks)
-		delete callbacks;
 }
 
 void Mtools::run(int argc, char** argv) {
 	Gtk::Main kit(argc, argv);
 
-	//Load the GtkBuilder file and instantiate its widgets:
-	refBuilder = Gtk::Builder::create();
+	Application* app = Application::getInstance();
+	app->setBuilder(Gtk::Builder::create());
+
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
 	try {
-		refBuilder->add_from_file(MTOOLS_UI);
+		app->getBuilder()->add_from_file(MTOOLS_UI);
 	} catch(const Glib::FileError& ex) {
 		std::cerr << "FileError: " << ex.what() << std::endl;
 		return;
@@ -34,16 +34,18 @@ void Mtools::run(int argc, char** argv) {
 	}
 #else
 	std::auto_ptr<Glib::Error> error;
-
-	if (!refBuilder->add_from_file(MTOOLS_UI, error)) {
+	if (!app->getBuilder()->add_from_file(MTOOLS_UI, error)) {
 		std::cerr << error->what() << std::endl;
 		return;
 	}
 #endif /* !GLIBMM_EXCEPTIONS_ENABLED */
 
-	refBuilder->get_widget("winMtools", pWinMtools);
-	if(pWinMtools) {
-		callbacks = new Callbacks(*pWinMtools, refBuilder);
-		kit.run(*pWinMtools);
+	Gtk::Window* pWindow;
+	app->getBuilder()->get_widget("winMtools", pWindow);
+	if(pWindow) {
+		app->setWindow(pWindow);
+
+		Callbacks callbacks;
+		kit.run(*app->getWindow());
 	}
 }

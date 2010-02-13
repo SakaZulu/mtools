@@ -13,18 +13,17 @@
 
 class Callbacks {
 public:
-	Callbacks(Gtk::Window& winMtools, Glib::RefPtr<Gtk::Builder>& refBuilder);
+	Callbacks();
 	virtual ~Callbacks();
 
 protected:
 	Nfc nfc;
 
-	Gtk::Window& winMtools;
-	Glib::RefPtr<Gtk::Builder>& refBuilder;
-
 	Gtk::Button* pBtnSearch;
+
 	Gtk::Button* pBtnTab1Read;
 	Gtk::Button* pBtnTab1Write;
+
 	Gtk::Button* pBtnTab2Init;
 	Gtk::Button* pBtnTab2Read;
 	Gtk::Button* pBtnTab2Inc;
@@ -59,6 +58,8 @@ protected:
 	void onAdjSectorValueChanged();
 
 	void onMiQuitClicked();
+
+	void onDlgAboutResponse(int responseId);
 
 	void about();
 
