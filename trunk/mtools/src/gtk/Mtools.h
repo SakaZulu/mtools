@@ -19,14 +19,8 @@ public:
 	virtual ~Mtools();
 
 	void run(int argc, char** argv);
-
 protected:
 	static const std::string MTOOLS_UI;
-
-	Gtk::Window* pWinMtools;
-	Glib::RefPtr<Gtk::Builder> refBuilder;
-
-	Callbacks* callbacks;
 };
 
 #endif /* MTOOLS_H_ */

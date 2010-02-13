@@ -1,0 +1,5 @@
+src/Callbacks.cpp
+src/Mtools.cpp
+src/Nfc.cpp
+src/Nfc.h
+mtools.glade

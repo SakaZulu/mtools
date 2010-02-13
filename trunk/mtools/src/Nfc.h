@@ -20,6 +20,8 @@
 #include <vector>
 #include <stdexcept>
 
+#include <glibmm/i18n.h>
+
 class Nfc {
 public:
 	const static int KEY_A = MFC_KEY_A;
@@ -59,13 +61,13 @@ protected:
 		if(!dev) {
 			connect();
 			if(!dev)
-				throw std::runtime_error("No NFC device found.");
+				throw std::runtime_error(_("No NFC device found."));
 		}
 	}
 
 	void isMifareTagSelected() {
 		if(selectedTag < 0)
-			throw std::runtime_error("MIFARE classic tag is not selected.");
+			throw std::runtime_error(_("MIFARE classic tag is not selected."));
 	}
 
 	unsigned short blockAddress(unsigned short sector, unsigned short block) {
