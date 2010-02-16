@@ -45,7 +45,8 @@ void Mtools::run(int argc, char** argv) {
 	if(pWindow) {
 		app->setWindow(pWindow);
 
-		Callbacks callbacks;
+		callbacks = new Callbacks();
 		kit.run(*app->getWindow());
+		delete callbacks;
 	}
 }

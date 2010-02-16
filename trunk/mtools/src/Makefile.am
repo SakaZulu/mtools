@@ -5,7 +5,7 @@ INCLUDES = \
 	-I$(top_srcdir)/src/gtk \
 	-I$(top_srcdir)/src/gtk/dialogs
 
-AM_CPPFLAGS = -Wall -g -DMTOOLS_LOCALEDIR=\"${MTOOLS_LOCALEDIR}\"
+AM_CPPFLAGS = -Wall -g -O0 -DMTOOLS_LOCALEDIR=\"${MTOOLS_LOCALEDIR}\"
 
 bin_PROGRAMS = mtools
 
@@ -15,9 +15,10 @@ mtools_SOURCES = mtools.cpp \
 	gtk/Callbacks.cpp gtk/Callbacks.h \
 	gtk/TrailerAccessConditions.cpp gtk/TrailerAccessConditions.h \
 	gtk/DataAccessConditions.cpp gtk/DataAccessConditions.h \
+	gtk/ComboBoxText.cpp gtk/ComboBoxText.h \
 	Nfc.cpp Nfc.h Utils.h \
 	gtk/Consts.cpp gtk/Consts.h \
-	gtk/GtkUtil.h \
+	gtk/GtkUtil.h gtk/GtkUtil.cpp \
 	gtk/dialogs/ErrorDialog.cpp gtk/dialogs/ErrorDialog.h
 	
 

@@ -21,6 +21,7 @@ public:
 	void run(int argc, char** argv);
 protected:
 	static const std::string MTOOLS_UI;
+	Callbacks* callbacks;
 };
 
 #endif /* MTOOLS_H_ */

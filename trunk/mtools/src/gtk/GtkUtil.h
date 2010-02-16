@@ -1,7 +1,7 @@
 /*
- * Util.h
+ * GtkUtil.h
  *
- *  Created on: 2010-02-13
+ *  Created on: 2010-02-15
  *      Author: root
  */
 
@@ -10,31 +10,25 @@
 
 #include <gtkmm.h>
 
-#include <string>
-#include <vector>
+#include "gtk/Application.h"
+#include "gtk/ComboBoxText.h"
 
 class GtkUtil {
-	GtkUtil();
+	GtkUtil() {}
 public:
-	virtual ~GtkUtil();
+	static ComboBoxText* setComboBoxText(std::string name, std::vector<std::string> v) {
+		Application* app = Application::getInstance();
 
-	static void setListStore(Gtk::ComboBox* cb, std::vector<std::string> v) {
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModel::ColumnRecord record;
-		record.add(name);
+		Gtk::ComboBox* cb;
+		app->getBuilder()->get_widget(name, cb);
 
-		Glib::RefPtr<Gtk::ListStore> model = Gtk::ListStore::create(record);
+		ComboBoxText* cbt = new ComboBoxText(cb);
+		for(unsigned int i = 0; i < v.size(); i++)
+			cbt->append_text(v[i]);
+		cbt->set_active_text(v[0]);
 
-		Gtk::TreeModel::Row row;
-		for(unsigned int i = 0; i < v.size(); i++) {
-			row = *(model->append());
-			row[name] = v[i];
-		}
-
-		cb->set_model(model);
-		cb->pack_start(name);
-		cb->set_active(0);
+		return cbt;
 	}
 };
 
-#endif /* UTIL_H_ */
+#endif /* GTKUTIL_H_ */

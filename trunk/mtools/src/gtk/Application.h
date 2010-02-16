@@ -19,8 +19,6 @@ class Application {
 	Application() {}
 public:
 	virtual ~Application() {
-		if(_instance != 0)
-			delete _instance;
 	}
 
 	static Application* getInstance() {

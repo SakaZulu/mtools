@@ -12,11 +12,6 @@
 #include "gtk/Callbacks.h"
 #include "gtk/dialogs/ErrorDialog.h"
 
-#include "gtk/GtkUtil.h"
-
-#include "gtk/DataAccessConditions.h"
-#include "gtk/TrailerAccessConditions.h"
-
 #include <vector>
 #include <algorithm>
 
@@ -24,9 +19,6 @@
 
 Callbacks::Callbacks() {
 	Application* app = Application::getInstance();
-
-	DataAccessConditions dataAC;
-	TrailerAccessConditions trailerAC;
 
 	// Button
 	app->getBuilder()->get_widget("btnSearch", pBtnSearch);

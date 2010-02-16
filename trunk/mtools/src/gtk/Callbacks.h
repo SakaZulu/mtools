@@ -9,7 +9,9 @@
 #define CALLBACKS_H_
 
 #include <gtkmm.h>
-#include "Nfc.h"
+#include "../Nfc.h"
+#include "gtk/DataAccessConditions.h"
+#include "gtk/TrailerAccessConditions.h"
 
 class Callbacks {
 public:
@@ -44,6 +46,9 @@ protected:
 	Gtk::Entry* pTxtReadWrite;
 
 	Gtk::AboutDialog* pDlgAbout;
+
+	DataAccessConditions dataAC;
+	TrailerAccessConditions trailerAC;
 
 	void onBtnSearchClicked();
 	void onBtnTab1ReadClick();

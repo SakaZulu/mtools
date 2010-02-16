@@ -11,6 +11,8 @@
 #include <string>
 #include <sstream>
 
+#include "nfc/nfc-types.h"
+
 class Utils {
 	Utils() {}
 public:
