@@ -10,16 +10,19 @@
 
 #include <gtkmm.h>
 
+#include "gtk/ComboBoxText.h"
+
 class DataAccessConditions {
-	Gtk::ComboBox* cbRead;
-	Gtk::ComboBox* cbWrite;
-	Gtk::ComboBox* cbInc;
-	Gtk::ComboBox* cbDec;
+private:
+	ComboBoxText* cbRead;
+	ComboBoxText* cbWrite;
+	ComboBoxText* cbInc;
+	ComboBoxText* cbDec;
 
 	Gtk::Button* btnSave;
 
 	void onBtnSaveClicked();
-
+	int calcAccessBits();
 public:
 	DataAccessConditions();
 	virtual ~DataAccessConditions();

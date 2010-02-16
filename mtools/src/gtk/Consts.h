@@ -18,8 +18,6 @@ private:
 	Consts();
 public:
 	virtual ~Consts() {
-		if(_instance != 0)
-			delete _instance;
 	}
 
 	static Consts* getInstance() {

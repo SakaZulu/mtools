@@ -10,17 +10,21 @@
 
 #include <gtkmm.h>
 
+#include "gtk/ComboBoxText.h"
+
 class TrailerAccessConditions {
-	Gtk::ComboBox* cbKeyARead;
-	Gtk::ComboBox* cbKeyAWrite;
-	Gtk::ComboBox* cbAcRead;
-	Gtk::ComboBox* cbAcWrite;
-	Gtk::ComboBox* cbKeyBRead;
-	Gtk::ComboBox* cbKeyBWrite;
+	ComboBoxText* cbKeyARead;
+	ComboBoxText* cbKeyAWrite;
+	ComboBoxText* cbAcRead;
+	ComboBoxText* cbAcWrite;
+	ComboBoxText* cbKeyBRead;
+	ComboBoxText* cbKeyBWrite;
 
 	Gtk::Button* btnSave;
 
 	void onBtnSaveClicked();
+
+	int calcAccessBits();
 public:
 	TrailerAccessConditions();
 	virtual ~TrailerAccessConditions();

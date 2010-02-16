@@ -20,8 +20,14 @@ MTOOLS_LOCALEDIR=[${datadir}/locale]
 AC_SUBST(MTOOLS_LOCALEDIR)
 
 # Checks for programs.
+if test -n "${CXXFLAGS}"; then
+	user_set_cxxflags=yes
+fi
 AC_PROG_CXX
 AC_PROG_CC
+if test X$user_set_cxxflags != Xyes; then
+	CXXFLAGS="-g"
+fi
 
 # Checks for libraries.
 AC_CHECK_LIB(nfc, nfc_connect,,AC_MSG_ERROR(Install libnfc))
