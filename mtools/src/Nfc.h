@@ -50,7 +50,7 @@ protected:
 	nfc_device_t* dev;
 
 	int selectedTag;
-	std::vector<MifareClassicTag> tags;
+	MifareTag* tags;
 
 	bool mifareConnected;
 
@@ -68,6 +68,38 @@ protected:
 	void isMifareTagSelected() {
 		if(selectedTag < 0)
 			throw std::runtime_error(_("MIFARE classic tag is not selected."));
+	}
+
+	bool isNXPClassic1k(MifareTag tag) {
+		if(tag->type == NXP_CLASSIC_1K)
+			return true;
+		return false;
+	}
+
+	bool isNXPClassic4k(MifareTag tag) {
+		if(tag->type == NXP_CLASSIC_4K)
+			return true;
+		return false;
+	}
+
+	bool isNokiaClassic4kEmulated(MifareTag tag) {
+		if(tag->type == NOKIA_CLASSIC_4K_EMULATED)
+			return true;
+		return false;
+	}
+
+	bool isClassic(MifareTag tag) {
+		if(isNXPClassic1k(tag) ||
+				isNXPClassic4k(tag) ||
+				isNokiaClassic4kEmulated(tag))
+			return true;
+		return false;
+	}
+
+	bool isNXPUltralight(MifareTag tag) {
+		if(tag->type == NXP_ULTRALIGHT)
+			return true;
+		return false;
 	}
 
 	unsigned short blockAddress(unsigned short sector, unsigned short block) {
