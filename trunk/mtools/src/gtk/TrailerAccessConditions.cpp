@@ -11,6 +11,8 @@
 #include "gtk/Application.h"
 
 #include "gtk/GtkUtil.h"
+#include "gtk/dialogs/ErrorDialog.h"
+
 
 #include "Utils.h"
 
