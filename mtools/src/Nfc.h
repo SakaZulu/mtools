@@ -12,9 +12,6 @@
 #include <nfc/nfc-types.h>
 #include <nfc/nfc-messages.h>
 
-#include <nfc/mifaretag.h>
-#include <nfc/mifareultag.h>
-
 #include <freefare.h>
 
 #include <vector>
@@ -57,51 +54,57 @@ protected:
 	void connect();
 	void disconnect();
 
-	void isNfcDeviceSetup() {
+	bool isDeviceSetup() {
 		if(!dev) {
 			connect();
 			if(!dev)
-				throw std::runtime_error(_("No NFC device found."));
+				return false;
 		}
+
+		return true;
 	}
 
-	void isMifareTagSelected() {
+public:
+	bool isTagSelected() {
 		if(selectedTag < 0)
-			throw std::runtime_error(_("MIFARE classic tag is not selected."));
+			return false;
+		return true;
 	}
 
-	bool isNXPClassic1k(MifareTag tag) {
-		if(tag->type == NXP_CLASSIC_1K)
+	bool isClassic1k() {
+		if(!isTagSelected())
+			return false;
+
+		if (freefare_get_tag_type(tags[selectedTag]) == CLASSIC_1K)
 			return true;
 		return false;
 	}
 
-	bool isNXPClassic4k(MifareTag tag) {
-		if(tag->type == NXP_CLASSIC_4K)
+	bool isClassic4k() {
+		if(!isTagSelected())
+			return false;
+
+		if(freefare_get_tag_type(tags[selectedTag]) == CLASSIC_4K)
 			return true;
 		return false;
 	}
 
-	bool isNokiaClassic4kEmulated(MifareTag tag) {
-		if(tag->type == NOKIA_CLASSIC_4K_EMULATED)
+	bool isClassic() {
+		if(isClassic1k() || isClassic4k())
 			return true;
 		return false;
 	}
 
-	bool isClassic(MifareTag tag) {
-		if(isNXPClassic1k(tag) ||
-				isNXPClassic4k(tag) ||
-				isNokiaClassic4kEmulated(tag))
+	bool isUltralight() {
+		if(!isTagSelected())
+			return false;
+
+		if(freefare_get_tag_type(tags[selectedTag]) == ULTRALIGHT)
 			return true;
 		return false;
 	}
 
-	bool isNXPUltralight(MifareTag tag) {
-		if(tag->type == NXP_ULTRALIGHT)
-			return true;
-		return false;
-	}
-
+protected:
 	unsigned short blockAddress(unsigned short sector, unsigned short block) {
 		return (sector * 4) + block;
 	}

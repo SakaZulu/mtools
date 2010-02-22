@@ -44,6 +44,7 @@ protected:
 	Gtk::Entry* pTxtUid;
 	Gtk::Entry* pTxtCardType;
 	Gtk::Entry* pTxtReadWrite;
+	Gtk::Entry* pTxtHexReadWrite;
 
 	Gtk::AboutDialog* pDlgAbout;
 

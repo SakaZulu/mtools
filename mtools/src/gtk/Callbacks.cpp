@@ -54,6 +54,7 @@ Callbacks::Callbacks() {
 	app->getBuilder()->get_widget("txtUid", pTxtUid);
 	app->getBuilder()->get_widget("txtCardType", pTxtCardType);
 	app->getBuilder()->get_widget("txtReadWrite", pTxtReadWrite);
+	app->getBuilder()->get_widget("txtHexReadWrite", pTxtHexReadWrite);
 
 	// Menu item
 	Gtk::ImageMenuItem* pMiQuit;
@@ -96,6 +97,8 @@ void Callbacks::onBtnSearchClicked() {
 		} else if(cardType.find("MIFARE Classic 4K") != std::string::npos) {
 			setOperationAdjustment(39, 3);
 			pAdjSector->signal_value_changed().connect(sigc::mem_fun(*this, &Callbacks::onAdjSectorValueChanged));
+		} else if(cardType.find("MIFARE Ultralight") != std::string::npos) {
+			setOperationAdjustment(0, 15);
 		} else {
 			pAdjBlock->set_value(0);
 			pAdjSector->set_value(0);
@@ -121,6 +124,14 @@ void Callbacks::onBtnTab1ReadClick() {
 		unsigned char data[17] = {0};
 		nfc.read(sector, block, data);
 		pTxtReadWrite->set_text((char*)data);
+
+		std::string hex;
+		if(nfc.isClassic())
+			hex = Utils::pByteToStrHex(data, 16);
+		else if(nfc.isUltralight())
+			hex = Utils::pByteToStrHex(data, 4);
+;
+		pTxtHexReadWrite->set_text(hex);
 	} catch(const std::runtime_error& error) {
 		ErrorDialog dialog;
 		dialog.show(error.what());

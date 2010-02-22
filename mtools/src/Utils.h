@@ -30,11 +30,20 @@ public:
 		return ss.str().c_str();
 	}
 
-	static std::string pByteToStrHex(byte_t* bytes, int len) {
+	static std::string pByteToStrHex(byte_t* bytes, unsigned int len) {
 		std::stringstream ss;
-		for(int i = 0; i < len; i++)
-			ss << std::hex << bytes[i];
-		return ss.str().c_str();
+		for(unsigned int i = 0; i < len; i++)
+			ss << std::hex << (unsigned int)bytes[i];
+		std::string hex = ss.str();
+
+		while(hex.size() < len*2)
+			hex = "0" + hex;
+
+		std::string ret = "";
+		for(unsigned int i = 0; i < hex.size(); i += 2)
+			ret += hex.substr(i, 2) + " ";
+
+		return ret.substr(0, ret.size() - 1);
 	}
 };
 
