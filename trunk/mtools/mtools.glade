@@ -394,9 +394,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="entry1">
+                          <object class="GtkEntry" id="txtHexReadWrite">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="editable">False</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
