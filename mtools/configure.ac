@@ -8,7 +8,7 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/mtools.cpp])
 AC_CONFIG_HEADERS([config.h])
 
-IT_PROG_INTLTOOL([0.41.0])
+IT_PROG_INTLTOOL([0.40.0])
 
 GETTEXT_PACKAGE=mtools
 AC_SUBST(GETTEXT_PACKAGE)
@@ -32,6 +32,7 @@ fi
 # Checks for libraries.
 AC_CHECK_LIB(nfc, nfc_connect,,AC_MSG_ERROR(Install libnfc))
 AC_CHECK_LIB(freefare, mifare_classic_connect,,AC_MSG_ERROR(Install libfreefare))
+AC_CHECK_LIB(gthread-2.0, g_thread_init)
 
 PKG_CHECK_MODULES(DEPS, gtkmm-2.4 >= 2.16)
 AC_SUBST(DEPS_CFLAGS)
