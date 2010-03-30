@@ -19,10 +19,13 @@ mtools_SOURCES = mtools.cpp \
 	Nfc.cpp Nfc.h Utils.h \
 	gtk/Consts.cpp gtk/Consts.h \
 	gtk/GtkUtil.h gtk/GtkUtil.cpp \
-	gtk/dialogs/ErrorDialog.cpp gtk/dialogs/ErrorDialog.h
+	gtk/dialogs/ErrorDialog.cpp gtk/dialogs/ErrorDialog.h \
+	gtk/dialogs/KeysChooserDialog.cpp gtk/dialogs/KeysChooserDialog.h \
+	gtk/dialogs/KeysStoreDialog.cpp gtk/dialogs/KeysStoreDialog.h \
+	gtk/dialogs/InputDialog.cpp gtk/dialogs/InputDialog.h
 	
 
-mtools_LDFLAGS = 
+mtools_LDFLAGS = -lboost_regex-mt -lboost_thread-mt
 
 mtools_LDADD = $(DEPS_LIBS)
 
