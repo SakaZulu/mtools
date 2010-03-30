@@ -20,12 +20,12 @@ TrailerAccessConditions::TrailerAccessConditions() {
 	Consts* consts = Consts::getInstance();
 	Application* app = Application::getInstance();
 
-	cbKeyARead 	= GtkUtil::setComboBoxText("cbTab4KeyARead", consts->acTrailerKeyARead);
-	cbKeyAWrite = GtkUtil::setComboBoxText("cbTab4KeyAWrite", consts->acTrailerKeyAWrite);
-	cbAcRead 	= GtkUtil::setComboBoxText("cbTab4AcRead", consts->acTrailerAccessBitsRead);
-	cbAcWrite 	= GtkUtil::setComboBoxText("cbTab4AcWrite", consts->acTrailerAccessBitsWrite);
-	cbKeyBRead 	= GtkUtil::setComboBoxText("cbTab4KeyBRead", consts->acTrailerKeyBRead);
-	cbKeyBWrite = GtkUtil::setComboBoxText("cbTab4KeyBWrite", consts->acTrailerKeyBWrite);
+	cbKeyARead 	= GtkUtil::getComboBoxText("cbTab4KeyARead", consts->acTrailerKeyARead);
+	cbKeyAWrite = GtkUtil::getComboBoxText("cbTab4KeyAWrite", consts->acTrailerKeyAWrite);
+	cbAcRead 	= GtkUtil::getComboBoxText("cbTab4AcRead", consts->acTrailerAccessBitsRead);
+	cbAcWrite 	= GtkUtil::getComboBoxText("cbTab4AcWrite", consts->acTrailerAccessBitsWrite);
+	cbKeyBRead 	= GtkUtil::getComboBoxText("cbTab4KeyBRead", consts->acTrailerKeyBRead);
+	cbKeyBWrite = GtkUtil::getComboBoxText("cbTab4KeyBWrite", consts->acTrailerKeyBWrite);
 
 	app->getBuilder()->get_widget("btnTab4Save", btnSave);
 	btnSave->signal_clicked().connect(sigc::mem_fun(*this, &TrailerAccessConditions::onBtnSaveClicked));

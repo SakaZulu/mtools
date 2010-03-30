@@ -10,12 +10,13 @@
 
 #include "gtk/Consts.h"
 #include "gtk/Callbacks.h"
-#include "gtk/dialogs/ErrorDialog.h"
 
 #include <vector>
 #include <algorithm>
 
 #include "gtk/Application.h"
+
+#include "gtk/GtkUtil.h"
 
 Callbacks::Callbacks() {
 	Application* app = Application::getInstance();
@@ -65,6 +66,10 @@ Callbacks::Callbacks() {
 	app->getBuilder()->get_widget("miSearch", pMiSearch);
 	pMiSearch->signal_activate().connect(sigc::mem_fun(*this, &Callbacks::onBtnSearchClicked));
 
+	Gtk::ImageMenuItem* pMiOpenKeys;
+	app->getBuilder()->get_widget("miOpenKeys", pMiOpenKeys);
+	pMiOpenKeys->signal_activate().connect(sigc::mem_fun(*this, &Callbacks::onMiOpenKeys));
+
 	Gtk::ImageMenuItem* pMiAbout;
 	app->getBuilder()->get_widget("miAbout", pMiAbout);
 	pMiAbout->signal_activate().connect(sigc::mem_fun(*this, &Callbacks::about));
@@ -72,9 +77,14 @@ Callbacks::Callbacks() {
 	// About dialog
 	app->getBuilder()->get_widget("dlgAbout", pDlgAbout);
 	pDlgAbout->signal_response().connect(sigc::mem_fun(*this, &Callbacks::onDlgAboutResponse));
+
+	dlgKeysStore.signal_changed.connect(sigc::mem_fun(*this, &Callbacks::onKeysStoreChange));
+
+	nfc = new Nfc();
 }
 
 Callbacks::~Callbacks() {
+	delete nfc;
 }
 
 void Callbacks::onBtnSearchClicked() {
@@ -82,12 +92,13 @@ void Callbacks::onBtnSearchClicked() {
 	Gtk::Adjustment *pAdjSector = pSpnSector->get_adjustment();
 
 	try {
+		tag = nfc->findTag();
+
 		std::string uid = "";
 		std::string cardType = "";
 
-		nfc.findTags();
-		uid = nfc.getTagUid();
-		cardType = nfc.getTagType();
+		uid = tag->getUid();
+		cardType = tag->getType();
 
 		pTxtUid->set_text(uid);
 		pTxtCardType->set_text(cardType);
@@ -95,7 +106,11 @@ void Callbacks::onBtnSearchClicked() {
 		if(cardType.find("MIFARE Classic 1K") != std::string::npos) {
 			setOperationAdjustment(15, 3);
 		} else if(cardType.find("MIFARE Classic 4K") != std::string::npos) {
-			setOperationAdjustment(39, 3);
+			if(pAdjSector->get_value() < 32)
+				setOperationAdjustment(39, 3);
+			else
+				setOperationAdjustment(39, 15);
+
 			pAdjSector->signal_value_changed().connect(sigc::mem_fun(*this, &Callbacks::onAdjSectorValueChanged));
 		} else if(cardType.find("MIFARE Ultralight") != std::string::npos) {
 			setOperationAdjustment(0, 15);
@@ -106,7 +121,6 @@ void Callbacks::onBtnSearchClicked() {
 		}
 
 	} catch(const std::runtime_error& error) {
-		clear();
 		setOperationAdjustment(0, 0);
 
 		ErrorDialog dialog;
@@ -122,13 +136,13 @@ void Callbacks::onBtnTab1ReadClick() {
 		authenticate(sector);
 
 		unsigned char data[17] = {0};
-		nfc.read(sector, block, data);
+		tag->read(sector, block, data);
 		pTxtReadWrite->set_text((char*)data);
 
 		std::string hex;
-		if(nfc.isClassic())
+		if(tag->isClassic())
 			hex = Utils::pByteToStrHex(data, 16);
-		else if(nfc.isUltralight())
+		else if(tag->isUltralight())
 			hex = Utils::pByteToStrHex(data, 4);
 ;
 		pTxtHexReadWrite->set_text(hex);
@@ -149,7 +163,7 @@ void Callbacks::onBtnTab1WriteClick() {
 
 		authenticate(sector);
 
-		nfc.write(sector, block, (unsigned char*)data.c_str());
+		tag->write(sector, block, (unsigned char*)data.c_str());
 	} catch(const std::runtime_error& error) {
 		ErrorDialog dialog;
 		dialog.show(error.what());
@@ -165,7 +179,7 @@ void Callbacks::onBtnTab2InitClick() {
 
 		authenticate(sector);
 
-		nfc.initValue(sector, block, value);
+		tag->initValue(sector, block, value);
 	} catch(const std::runtime_error& error) {
 		ErrorDialog dialog;
 		dialog.show(error.what());
@@ -179,7 +193,7 @@ void Callbacks::onBtnTab2ReadClick() {
 
 		authenticate(sector);
 
-		int value = nfc.readValue(sector, block);
+		int value = tag->readValue(sector, block);
 		pSpnValue->set_value(value);
 	} catch(const std::runtime_error& error) {
 		ErrorDialog dialog;
@@ -196,7 +210,7 @@ void Callbacks::onBtnTab2IncClick() {
 
 		authenticate(sector);
 
-		value = nfc.incValue(sector, block, value);
+		value = tag->incValue(sector, block, value);
 		pSpnValue->set_value(value);
 	} catch(const std::runtime_error& error) {
 		ErrorDialog dialog;
@@ -213,7 +227,7 @@ void Callbacks::onBtnTab2DecClick() {
 
 		authenticate(sector);
 
-		value = nfc.decValue(sector, block, value);
+		value = tag->decValue(sector, block, value);
 		pSpnValue->set_value(value);
 	} catch(const std::runtime_error& error) {
 		ErrorDialog dialog;
@@ -246,6 +260,10 @@ void Callbacks::onMiQuitClicked () {
 	Gtk::Main::quit();
 }
 
+void Callbacks::onMiOpenKeys() {
+	dlgKeysStore.run();
+}
+
 void Callbacks::authenticate(int sector) {
 	unsigned char key[6] = {0};
 
@@ -254,7 +272,7 @@ void Callbacks::authenticate(int sector) {
 		keyType = Nfc::KEY_A;
 
 	if(pCbDefKeys->get_active())
-		nfc.authenticate(sector, keyType);
+		tag->authenticate(sector, keyType);
 	else {
 		std::string skey = pTxtKey->get_text();
 		if(skey.size() != 12)
@@ -271,7 +289,7 @@ void Callbacks::authenticate(int sector) {
 			std::cout << std::hex << (int)key[i] << ":";
 		std::cout << std::endl;
 
-		nfc.authenticate(sector, key, keyType);
+		tag->authenticate(sector, key, keyType);
 	}
 }
 
@@ -286,4 +304,11 @@ void Callbacks::about() {
 
 void Callbacks::onDlgAboutResponse(int responseId) {
 	pDlgAbout->hide();
+}
+
+void Callbacks::onKeysStoreChange(const std::vector<std::string> v) {
+	std::list<std::string> keys;
+	for(unsigned int i = 0; i < v.size(); i++)
+		keys.push_back(v[i]);
+	tag->setKeysStore(keys);
 }

@@ -5,6 +5,8 @@
  *      Author: rosek
  */
 
+#include <glibmm.h>
+
 #include "gtk/Mtools.h"
 #include "gtk/Application.h"
 
@@ -17,7 +19,9 @@ Mtools::~Mtools() {
 }
 
 void Mtools::run(int argc, char** argv) {
-	Gtk::Main kit(argc, argv);
+	Gtk::Main main(argc, argv);
+	if(!Glib::thread_supported())
+		Glib::thread_init();
 
 	Application* app = Application::getInstance();
 	app->setBuilder(Gtk::Builder::create());
@@ -46,7 +50,7 @@ void Mtools::run(int argc, char** argv) {
 		app->setWindow(pWindow);
 
 		callbacks = new Callbacks();
-		kit.run(*app->getWindow());
+		main.run(*app->getWindow());
 		delete callbacks;
 	}
 }

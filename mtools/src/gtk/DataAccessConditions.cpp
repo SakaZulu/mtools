@@ -19,10 +19,10 @@ DataAccessConditions::DataAccessConditions() : cbRead(0), cbWrite(0), cbInc(0), 
 	Consts* consts = Consts::getInstance();
 	Application* app = Application::getInstance();
 
-	cbRead 	= GtkUtil::setComboBoxText("cbTab3Read", consts->acDataBlockRead);
-	cbWrite	= GtkUtil::setComboBoxText("cbTab3Write", consts->acDataBlockWrite);
-	cbInc 	= GtkUtil::setComboBoxText("cbTab3Inc", consts->acDataBlockInc);
-	cbDec 	= GtkUtil::setComboBoxText("cbTab3Dec", consts->acDataBlockDec);
+	cbRead 	= GtkUtil::getComboBoxText("cbTab3Read", consts->acDataBlockRead);
+	cbWrite	= GtkUtil::getComboBoxText("cbTab3Write", consts->acDataBlockWrite);
+	cbInc 	= GtkUtil::getComboBoxText("cbTab3Inc", consts->acDataBlockInc);
+	cbDec 	= GtkUtil::getComboBoxText("cbTab3Dec", consts->acDataBlockDec);
 
 	app->getBuilder()->get_widget("btnTab3Save", btnSave);
 	btnSave->signal_clicked().connect(sigc::mem_fun(*this, &DataAccessConditions::onBtnSaveClicked));
